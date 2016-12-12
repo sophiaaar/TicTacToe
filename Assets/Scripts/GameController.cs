@@ -1,108 +1,135 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
-public class GameController : MonoBehaviour
-{
+public class GameController : MonoBehaviour {
+
 	public Text[] buttonList;
-	private string playerSide;
 	public GameObject gameOverPanel;
 	public Text gameOverText;
+	public GameObject restartButton;
+
+	private string playerSide;
 	private int moveCount;
 
-	void Awake()
+	void Awake ()
 	{
-		moveCount = 0;
-		gameOverPanel.SetActive(false);
 		SetGameControllerReferenceOnButtons();
 		playerSide = "X";
+		gameOverPanel.SetActive(false);
+		moveCount = 0;
+		restartButton.SetActive(false);
 	}
 
-	public string GetPlayerSide()
+	void SetGameControllerReferenceOnButtons ()
+	{
+		for (int i = 0; i < buttonList.Length; i++)
+		{
+			buttonList[i].GetComponentInParent<GridSpace>().SetGameControllerReference(this);
+		}
+	}
+
+	public string GetPlayerSide ()
 	{
 		return playerSide;
 	}
 
-	void ChangeSides()
+	public void EndTurn ()
 	{
-		playerSide = (playerSide == "X") ? "O" : "X";
-	}
-
-	public void EndTurn()
-	{
-		//Debug.Log ("EndTurn is not implemented!");
 		moveCount++;
 
 		if (buttonList [0].text == playerSide && buttonList [1].text == playerSide && buttonList [2].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (buttonList [3].text == playerSide && buttonList [4].text == playerSide && buttonList [5].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (buttonList [6].text == playerSide && buttonList [7].text == playerSide && buttonList [8].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (buttonList [0].text == playerSide && buttonList [3].text == playerSide && buttonList [6].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (buttonList [1].text == playerSide && buttonList [4].text == playerSide && buttonList [7].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (buttonList [2].text == playerSide && buttonList [5].text == playerSide && buttonList [8].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (buttonList [0].text == playerSide && buttonList [4].text == playerSide && buttonList [8].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (buttonList [2].text == playerSide && buttonList [4].text == playerSide && buttonList [6].text == playerSide)
 		{
-			GameOver();
+			GameOver(playerSide);
 		}
 
 		if (moveCount >= 9)
 		{
-			gameOverPanel.SetActive(true);
-			gameOverText.text = "It's a draw!";
+			GameOver("draw");
 		}
 
 		ChangeSides();
+
 	}
 
-	void GameOver()
+	void ChangeSides ()
 	{
-		for (int i = 0; i < buttonList.Length; i++)
-		{
-			buttonList[i].GetComponentInParent<Button>().interactable = false;
-		}
-		SetGameOverText(playerSide + " Wins!");
+		playerSide = (playerSide == "X") ? "O" : "X";
 	}
 
-	void SetGameOverText(string value)
+	void GameOver (string winningPlayer)
+	{
+		SetBoardInteractable(false);
+		if (winningPlayer == "draw")
+		{
+			SetGameOverText("It's a Draw!");
+		} else
+		{
+			SetGameOverText(winningPlayer + " Wins!");
+		}
+		restartButton.SetActive(true);
+	}
+
+	void SetGameOverText (string value)
 	{
 		gameOverPanel.SetActive(true);
 		gameOverText.text = value;
 	}
 
-	void SetGameControllerReferenceOnButtons()
+	public void RestartGame ()
+	{
+		playerSide = "X";
+		moveCount = 0;
+		gameOverPanel.SetActive(false);
+		restartButton.SetActive(false);
+		SetBoardInteractable(true);
+
+		for (int i = 0; i < buttonList.Length; i++)
+		{
+			buttonList [i].text = "";
+		}
+	}
+
+	void SetBoardInteractable (bool toggle)
 	{
 		for (int i = 0; i < buttonList.Length; i++)
 		{
-			buttonList[i].GetComponentInParent<GridSpace>().SetGameControllerReference(this);
+			buttonList[i].GetComponentInParent<Button>().interactable = toggle;
 		}
 	}
 }
