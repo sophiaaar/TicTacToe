@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour {
 		gameOverPanel.SetActive(false);
 		moveCount = 0;
 		restartButton.SetActive(false);
+		// test test test test
 	}
 
 	void SetGameControllerReferenceOnButtons ()
